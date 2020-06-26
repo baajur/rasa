@@ -23,7 +23,7 @@ async def extract_story_graph(
 
     if not interpreter:
         interpreter = RegexInterpreter()
-    story_steps = await loading.load_data_from_folder(
+    story_steps = await loading.load_data_from_resource(
         resource_name,
         domain,
         interpreter,

@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Optional, Dict, Text, List
+from typing import Optional, Dict, Text, List, Any
 
 from rasa.constants import DOCS_URL_DOMAINS
 from rasa.core.constants import INTENT_MESSAGE_PREFIX
@@ -26,7 +26,7 @@ class StoryReader:
         template_vars: Optional[Dict] = None,
         use_e2e: bool = False,
         source_name: Text = None,
-    ):
+    ) -> None:
         self.story_steps = []
         self.current_step_builder: Optional[StoryStepBuilder] = None
         self.domain = domain
@@ -71,3 +71,16 @@ class StoryReader:
 
         for p in parsed_events:
             self.current_step_builder.add_event(p)
+
+    def _add_checkpoint(
+        self, name: Text, conditions: Optional[Dict[Text, Any]]
+    ) -> None:
+
+        # Ensure story part already has a name
+        if not self.current_step_builder:
+            raise StoryParseError(
+                "Checkpoint '{}' is at an invalid location. "
+                "Expected a story start.".format(name)
+            )
+
+        self.current_step_builder.add_checkpoint(name, conditions)
